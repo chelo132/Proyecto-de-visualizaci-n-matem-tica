@@ -192,13 +192,16 @@ manim -pqh src/main.py NombreDeLaEscena
 
 ## 📌 Estado del proyecto
 
-- [ ] Desarrollo matemático previo (notas y cálculos)
-- [ ] Setup del entorno Manim
-- [ ] Escena 1: Presentación de la función
-- [ ] Escena 2: Derivadas parciales
-- [ ] Escena 3: Plano tangente 3D
-- [ ] Escena 4: Aproximación lineal
-- [ ] Escena 5: Estimación del valor
-- [ ] Escena 6: Análisis del error
-- [ ] Edición y narración del video final
-- [ ] Entrega
+- [x] Desarrollo matemático previo (notas, cálculos y LaTeX en `docs/desarrollo_matematico.md`)
+- [x] Setup del entorno Manim (entorno virtual + dependencias + LaTeX)
+- [x] Escena 0: Introducción al problema y pregunta central
+- [x] Escena 1: Presentación de la superficie 3D y punto $P=(2,1,2)$ con proyección
+- [x] Escena 2: Derivadas parciales paso a paso e interpretación geométrica
+- [x] Escena 3: Plano tangente 3D, curvas directrices, **zoom local obligatorio** y visualización de error
+- [x] Escena 4: Deducción y construcción formal de la aproximación lineal $L(x,y)$
+- [x] Escena 5: Estimación numérica $L(1.98, 1.03)$ y cálculo del error absoluto $E$
+- [x] Escena 6: Conclusiones respondiendo a la pregunta central
+- [x] Guion de narración escena por escena sincronizado (`docs/guion_narracion.md`)
+- [ ] Grabación de la voz y ensamble del video final (4 a 6 min)
+- [ ] Entrega final
+
