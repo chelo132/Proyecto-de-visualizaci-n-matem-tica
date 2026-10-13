@@ -44,6 +44,21 @@ def crear_encabezado(escena, texto, color=TEAL):
     return titulo, sep
 
 
+def crear_tarjeta_hud(mobject, color_borde=TEAL, buff=0.2, opacity=0.85):
+    """Crea una tarjeta semitransparente con borde para dar alto contraste sobre fondos 3D."""
+    fondo = RoundedRectangle(
+        corner_radius=0.15,
+        fill_color="#0b0b14",
+        fill_opacity=opacity,
+        stroke_color=color_borde,
+        stroke_width=1.5,
+        width=mobject.width + 2 * buff,
+        height=mobject.height + 2 * buff,
+    ).move_to(mobject)
+    return VGroup(fondo, mobject)
+
+
+
 # ════════════════════════════════════════════════════════════════════════════
 # ESCENA 0 — Introducción al problema
 # ════════════════════════════════════════════════════════════════════════════
@@ -115,177 +130,195 @@ class Escena00Introduccion(Scene):
 # ════════════════════════════════════════════════════════════════════════════
 class Escena01Superficie(ThreeDScene):
     """
-    Presenta la función f(x,y)=xy² en 3D y marca el punto P=(2,1,2).
+    Presenta la función f(x,y)=xy² en 3D, el punto base (2,1) en el plano xy,
+    su elevación a la superficie P=(2,1,2), y una rotación clara.
     """
 
     def construct(self):
-        self.set_camera_orientation(phi=70 * DEGREES, theta=-45 * DEGREES)
+        self.set_camera_orientation(phi=70 * DEGREES, theta=-50 * DEGREES)
 
+        # Ejes 3D con rangos balanceados
         ejes = ThreeDAxes(
-            x_range=[0, 4, 1],
-            y_range=[-1, 3, 1],
-            z_range=[-1, 6, 1],
+            x_range=[0, 3.5, 1],
+            y_range=[-0.5, 2.5, 1],
+            z_range=[0, 6, 2],
+            x_length=6,
+            y_length=5,
+            z_length=4.5,
         )
         labels = ejes.get_axis_labels(x_label="x", y_label="y", z_label="z")
 
+        # Superficie f(x,y) = x * y^2
         superficie = Surface(
-            lambda u, v: np.array([u, v, f(u, v)]),
-            u_range=[0.5, 3.5],
-            v_range=[-0.5, 2.5],
-            resolution=(30, 30),
+            lambda u, v: ejes.c2p(u, v, f(u, v)),
+            u_range=[0.5, 3.2],
+            v_range=[0.0, 2.2],
+            resolution=(28, 28),
         )
-        superficie.set_style(fill_opacity=0.75, stroke_opacity=0.2)
-        superficie.set_fill_by_value(axes=ejes, colorscale=[BLUE_E, TEAL, GREEN_B])
+        superficie.set_style(fill_opacity=0.72, stroke_opacity=0.15)
+        superficie.set_fill_by_value(axes=ejes, colorscale=[BLUE_E, TEAL_D, GREEN_B])
 
-        punto_P = Sphere(radius=0.1, color=RED).move_to(np.array([A, B, FAB]))
+        # Elementos en plano xy: punto (a,b,0) y proyección
+        pos_base = ejes.c2p(A, B, 0)
+        pos_P = ejes.c2p(A, B, FAB)
 
-        # Etiqueta fija en pantalla
-        etiqueta = MathTex(r"f(x,y) = xy^2", font_size=36, color=WHITE)
-        self.add_fixed_in_frame_mobjects(etiqueta)
-        etiqueta.to_corner(UL, buff=0.4)
+        punto_base = Dot3D(point=pos_base, radius=0.08, color=YELLOW)
+        linea_elevacion = DashedLine(pos_base, pos_P, color=YELLOW_B, stroke_width=4, dash_length=0.1)
+        punto_P = Dot3D(point=pos_P, radius=0.11, color=RED)
 
+        # Textos 2D fijos en pantalla
+        etiqueta_func = MathTex(r"z = f(x,y) = xy^2", font_size=34, color=WHITE)
+        etiqueta_p = MathTex(r"P = (2,\, 1,\, f(2,1)) = (2,\, 1,\, 2)", font_size=30, color=YELLOW)
+        panel_2d = VGroup(etiqueta_func, etiqueta_p).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
+        panel_2d.to_corner(UL, buff=0.4)
+        self.add_fixed_in_frame_mobjects(panel_2d)
+
+        # Animaciones secuenciales
         self.play(Create(ejes), Write(labels), run_time=1.2)
-        self.play(Write(etiqueta))
-        self.play(Create(superficie), run_time=2)
-        self.play(FadeIn(punto_P))
-        self.begin_ambient_camera_rotation(rate=0.08)
-        self.wait(4)
-        self.stop_ambient_camera_rotation()
-
-
-# ════════════════════════════════════════════════════════════════════════════
-# ESCENA 2 — Derivadas parciales
-# ════════════════════════════════════════════════════════════════════════════
-class Escena02Derivadas(Scene):
-    """
-    Calcula fx y fy paso a paso y muestra su interpretación geométrica.
-    """
-
-    def construct(self):
-        titulo, sep = crear_encabezado(self, "Derivadas parciales")
-
-        # ── Función de partida ────────────────────────────────────────────
-        func_tex = MathTex(r"f(x,y) = xy^2", font_size=42)
-        func_tex.next_to(sep, DOWN, buff=0.45)
-        self.play(Write(func_tex))
-        self.wait(0.6)
-
-        # ── Derivada en x ─────────────────────────────────────────────────
-        label_x = Text("Derivada parcial en x:", font_size=26, color=BLUE_B)
-        label_x.next_to(func_tex, DOWN, buff=0.5).to_edge(LEFT, buff=0.6)
-
-        fx_calc = MathTex(
-            r"f_x(x,y) = \frac{\partial}{\partial x}(xy^2) = y^2",
-            font_size=34,
-        ).next_to(label_x, DOWN, buff=0.18).shift(RIGHT * 0.5)
-
-        fx_eval = MathTex(r"f_x(2,\,1) = 1^2 = ", r"1", font_size=36)
-        fx_eval[1].set_color(YELLOW)
-        fx_eval.next_to(fx_calc, DOWN, buff=0.18).align_to(fx_calc, LEFT)
-
-        self.play(FadeIn(label_x))
-        self.play(Write(fx_calc))
-        self.play(Write(fx_eval))
+        self.play(Write(etiqueta_func), run_time=0.8)
+        self.play(Create(superficie), run_time=2.2)
         self.wait(0.5)
 
-        # ── Derivada en y ─────────────────────────────────────────────────
-        label_y = Text("Derivada parcial en y:", font_size=26, color=GREEN_B)
-        label_y.next_to(fx_eval, DOWN, buff=0.45).to_edge(LEFT, buff=0.6)
+        # Mostrar proyección de (2,1) y elevar hasta P
+        self.play(FadeIn(punto_base), run_time=0.8)
+        self.play(Create(linea_elevacion), run_time=1)
+        self.play(FadeIn(punto_P), Write(etiqueta_p), run_time=1)
+        self.wait(0.8)
 
-        fy_calc = MathTex(
-            r"f_y(x,y) = \frac{\partial}{\partial y}(xy^2) = 2xy",
-            font_size=34,
-        ).next_to(label_y, DOWN, buff=0.18).shift(RIGHT * 0.5)
-
-        fy_eval = MathTex(r"f_y(2,\,1) = 2(2)(1) = ", r"4", font_size=36)
-        fy_eval[1].set_color(YELLOW)
-        fy_eval.next_to(fy_calc, DOWN, buff=0.18).align_to(fy_calc, LEFT)
-
-        self.play(FadeIn(label_y))
-        self.play(Write(fy_calc))
-        self.play(Write(fy_eval))
-        self.wait(0.7)
-
-        # ── Resumen final ─────────────────────────────────────────────────
-        # Quitamos todo excepto título y separador
-        self.play(
-            FadeOut(func_tex),
-            FadeOut(label_x), FadeOut(fx_calc), FadeOut(fx_eval),
-            FadeOut(label_y), FadeOut(fy_calc), FadeOut(fy_eval),
-        )
-
-        r1 = MathTex(r"f_x(2,1) = ", r"1", font_size=46)
-        r1[1].set_color(YELLOW)
-        r2 = MathTex(r"f_y(2,1) = ", r"4", font_size=46)
-        r2[1].set_color(YELLOW)
-
-        resumen = VGroup(r1, r2).arrange(RIGHT, buff=1.5)
-        resumen.next_to(sep, DOWN, buff=1.0).center()
-
-        interpretacion = Text(
-            "La superficie sube 1 unidad en dirección x\n"
-            "y 4 unidades en dirección y, cerca de P = (2, 1, 2).",
-            font_size=26,
-            color=GRAY_B,
-            line_spacing=1.4,
-        ).next_to(resumen, DOWN, buff=0.6)
-
-        self.play(Write(r1), Write(r2))
-        self.wait(0.4)
-        self.play(FadeIn(interpretacion, shift=UP * 0.2))
-        self.wait(3)
+        # Giro de cámara para apreciar la curvatura de la superficie
+        self.move_camera(theta=-15 * DEGREES, phi=65 * DEGREES, run_time=3.5)
+        self.wait(1.5)
 
 
 # ════════════════════════════════════════════════════════════════════════════
-# ESCENA 3 — Plano tangente 3D
+# ESCENA 3 — Plano tangente 3D y Comportamiento Local (Zoom)
 # ════════════════════════════════════════════════════════════════════════════
 class Escena03PlanoTangente(ThreeDScene):
     """
-    Muestra la superficie, el punto P y el plano tangente animados en 3D.
+    Construye visualmente el plano tangente a partir de las pendientes fx y fy,
+    muestra el plano z = x + 4y - 4, hace zoom local al punto de tangencia
+    para evidenciar f ≈ L, e ilustra la aproximación en (1.98, 1.03).
     """
 
     def construct(self):
-        self.set_camera_orientation(phi=70 * DEGREES, theta=-45 * DEGREES)
+        self.set_camera_orientation(phi=68 * DEGREES, theta=-55 * DEGREES)
 
+        # Ejes 3D
         ejes = ThreeDAxes(
-            x_range=[0, 4, 1],
-            y_range=[-1, 3, 1],
-            z_range=[-1, 6, 1],
+            x_range=[0, 3.5, 1],
+            y_range=[-0.5, 2.5, 1],
+            z_range=[0, 6, 2],
+            x_length=6,
+            y_length=5,
+            z_length=4.5,
         )
+        labels = ejes.get_axis_labels(x_label="x", y_label="y", z_label="z")
 
+        # Superficie f(x,y)
         superficie = Surface(
-            lambda u, v: np.array([u, v, f(u, v)]),
-            u_range=[0.5, 3.5],
-            v_range=[-0.5, 2.5],
+            lambda u, v: ejes.c2p(u, v, f(u, v)),
+            u_range=[0.6, 3.2],
+            v_range=[0.0, 2.2],
             resolution=(28, 28),
         )
-        superficie.set_style(fill_opacity=0.65, stroke_opacity=0.15)
-        superficie.set_fill_by_value(axes=ejes, colorscale=[BLUE_E, TEAL, GREEN_B])
+        superficie.set_style(fill_opacity=0.6, stroke_opacity=0.1)
+        superficie.set_fill_by_value(axes=ejes, colorscale=[BLUE_E, TEAL_D, GREEN_C])
 
-        plano = Surface(
-            lambda u, v: np.array([u, v, L(u, v)]),
-            u_range=[0.5, 3.5],
-            v_range=[-0.5, 2.5],
-            resolution=(10, 10),
+        # Punto de tangencia P = (2, 1, 2)
+        pos_P = ejes.c2p(A, B, FAB)
+        punto_P = Dot3D(point=pos_P, radius=0.11, color=RED)
+
+        # Curvas sobre la superficie que pasan por (2,1):
+        # 1. Curva variando x (con y=1 fijo): f(x,1) = x
+        curva_x = ParametricFunction(
+            lambda t: ejes.c2p(t, 1.0, f(t, 1.0)),
+            t_range=[1.0, 3.0],
+            color=BLUE_A,
+            stroke_width=4,
         )
-        plano.set_style(fill_opacity=0.45, stroke_opacity=0.25)
+        # 2. Curva variando y (con x=2 fijo): f(2,y) = 2y^2
+        curva_y = ParametricFunction(
+            lambda t: ejes.c2p(2.0, t, f(2.0, t)),
+            t_range=[0.3, 1.8],
+            color=GREEN_A,
+            stroke_width=4,
+        )
+
+        # Vectores/rectas tangentes correspondientes a fx=1 y fy=4
+        v_tan_x = Line(ejes.c2p(1.2, 1.0, 1.2), ejes.c2p(2.8, 1.0, 2.8), color=YELLOW, stroke_width=5)
+        v_tan_y = Line(ejes.c2p(2.0, 0.4, -0.4), ejes.c2p(2.0, 1.6, 4.4), color=YELLOW, stroke_width=5)
+
+        # Plano tangente z = x + 4y - 4 alrededor de (2,1)
+        plano = Surface(
+            lambda u, v: ejes.c2p(u, v, L(u, v)),
+            u_range=[1.0, 3.0],
+            v_range=[0.2, 1.8],
+            resolution=(12, 12),
+        )
+        plano.set_style(fill_opacity=0.45, stroke_opacity=0.3)
         plano.set_color(ORANGE)
 
-        punto_P = Sphere(radius=0.1, color=RED).move_to(np.array([A, B, FAB]))
+        # Elementos 2D fijos en pantalla
+        lbl_ecuacion = MathTex(r"\text{Plano Tangente: } z = x + 4y - 4", font_size=30, color=ORANGE)
+        lbl_info = Text("Las pendientes fx=1 y fy=4 generan el plano tangente.", font_size=22, color=GRAY_B)
+        info_group = VGroup(lbl_ecuacion, lbl_info).arrange(DOWN, aligned_edge=LEFT, buff=0.15)
+        info_group.to_corner(UL, buff=0.4)
+        self.add_fixed_in_frame_mobjects(info_group)
 
-        # Etiqueta fija del plano tangente
-        ecuacion = MathTex(r"z = x + 4y - 4", font_size=32, color=ORANGE)
-        self.add_fixed_in_frame_mobjects(ecuacion)
-        ecuacion.to_corner(UR, buff=0.4)
-
-        self.play(Create(ejes), run_time=1)
-        self.play(Create(superficie), run_time=2)
-        self.play(FadeIn(punto_P))
+        # 1. Mostrar superficie y punto P
+        self.play(Create(ejes), Write(labels), run_time=1)
+        self.play(Create(superficie), FadeIn(punto_P), run_time=1.8)
         self.wait(0.5)
-        self.play(Create(plano), Write(ecuacion), run_time=2)
-        self.begin_ambient_camera_rotation(rate=0.07)
-        self.wait(5)
-        self.stop_ambient_camera_rotation()
+
+        # 2. Mostrar curvas sobre la superficie y sus pendientes tangentes
+        self.play(Create(curva_x), Create(curva_y), run_time=1.5)
+        self.play(Create(v_tan_x), Create(v_tan_y), run_time=1.2)
+        self.wait(0.8)
+
+        # 3. Formación del plano tangente
+        self.play(Write(lbl_ecuacion), FadeIn(lbl_info), run_time=0.8)
+        self.play(
+            Create(plano),
+            FadeOut(curva_x), FadeOut(curva_y),
+            FadeOut(v_tan_x), FadeOut(v_tan_y),
+            run_time=2,
+        )
+        self.wait(1)
+
+        # 4. ZOOM O ACERCAMIENTO AL PUNTO DE TANGENCIA (Obligatorio en pauta)
+        lbl_zoom = Text("Acercamiento: localmente la superficie y el plano coinciden", font_size=23, color=YELLOW)
+        lbl_zoom.to_corner(UR, buff=0.4)
+        self.add_fixed_in_frame_mobjects(lbl_zoom)
+
+        self.play(Write(lbl_zoom), run_time=0.8)
+        # Acercar cámara y enfocar cerca de P
+        self.move_camera(
+            phi=60 * DEGREES,
+            theta=-35 * DEGREES,
+            zoom=2.3,
+            frame_center=pos_P,
+            run_time=3.5,
+        )
+        self.wait(1.5)
+
+        # 5. Punto a aproximar (1.98, 1.03) cerca de (2,1)
+        pos_real = ejes.c2p(X0, Y0, f(X0, Y0))
+        pos_aprox = ejes.c2p(X0, Y0, L(X0, Y0))
+
+        punto_aprox = Dot3D(point=pos_aprox, radius=0.04, color=YELLOW)
+        punto_real = Dot3D(point=pos_real, radius=0.04, color=GREEN)
+        linea_error = Line(pos_aprox, pos_real, color=RED, stroke_width=6)
+
+        lbl_eval = MathTex(r"(x_0,y_0) = (1.98,\, 1.03)", font_size=26, color=YELLOW)
+        lbl_eval.next_to(lbl_zoom, DOWN, buff=0.2, aligned_edge=RIGHT)
+        self.add_fixed_in_frame_mobjects(lbl_eval)
+
+        self.play(Write(lbl_eval), FadeIn(punto_aprox), FadeIn(punto_real), Create(linea_error), run_time=1.5)
+        self.wait(1)
+
+        # Rotación sutil en zoom para notar cómo están prácticamente pegados
+        self.move_camera(theta=-15 * DEGREES, phi=50 * DEGREES, run_time=2.5)
+        self.wait(2)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -338,50 +371,64 @@ class Escena05EstimacionError(Scene):
     def construct(self):
         titulo, sep = crear_encabezado(self, "Estimación y error")
 
-        # Aproximación
+        # ── Bloque 1: Aproximación lineal ────────────────────────────────
         aprox_label = Text("Aproximación lineal:", font_size=26, color=YELLOW)
-        aprox_label.next_to(sep, DOWN, buff=0.5).to_edge(LEFT, buff=0.6)
+        aprox_label.next_to(sep, DOWN, buff=0.45).to_edge(LEFT, buff=0.7)
 
         aprox = MathTex(
-            r"L(1.98,\;1.03) = 1.98 + 4(1.03) - 4 = ", r"2.10",
-            font_size=36,
-        ).next_to(aprox_label, DOWN, buff=0.2).shift(RIGHT * 0.4)
+            r"L(1.98,\ 1.03) = 1.98 + 4(1.03) - 4 = ",
+            r"2.10",
+            font_size=32,
+        )
         aprox[1].set_color(YELLOW)
+        aprox.next_to(aprox_label, DOWN, buff=0.15).to_edge(LEFT, buff=1.0)
 
-        # Valor real
+        self.play(FadeIn(aprox_label))
+        self.play(Write(aprox))
+        self.wait(0.6)
+
+        # ── Bloque 2: Valor real ──────────────────────────────────────────
         real_label = Text("Valor real:", font_size=26, color=GREEN_B)
-        real_label.next_to(aprox, DOWN, buff=0.45).to_edge(LEFT, buff=0.6)
+        real_label.next_to(aprox, DOWN, buff=0.4).to_edge(LEFT, buff=0.7)
 
         real = MathTex(
-            r"f(1.98,\;1.03) = 1.98 \cdot (1.03)^2 \approx ", r"2.100582",
-            font_size=36,
-        ).next_to(real_label, DOWN, buff=0.2).shift(RIGHT * 0.4)
+            r"f(1.98,\ 1.03) = 1.98 \cdot (1.03)^2 \approx ",
+            r"2.100582",
+            font_size=32,
+        )
         real[1].set_color(GREEN_B)
+        real.next_to(real_label, DOWN, buff=0.15).to_edge(LEFT, buff=1.0)
 
-        # Error
+        self.play(FadeIn(real_label))
+        self.play(Write(real))
+        self.wait(0.6)
+
+        # ── Bloque 3: Error absoluto ──────────────────────────────────────
         error_label = Text("Error absoluto:", font_size=26, color=RED_B)
-        error_label.next_to(real, DOWN, buff=0.45).to_edge(LEFT, buff=0.6)
+        error_label.next_to(real, DOWN, buff=0.4).to_edge(LEFT, buff=0.7)
 
         error = MathTex(
-            r"E = |f - L| = |2.100582 - 2.10| \approx ", r"0.000582",
-            font_size=34,
-        ).next_to(error_label, DOWN, buff=0.2).shift(RIGHT * 0.4)
-        error[1].set_color(RED_B)
+            r"E = |f(1.98,1.03) - L(1.98,1.03)|",
+            r"= |2.100582 - 2.10| \approx ",
+            r"0.000582",
+            font_size=30,
+        )
+        error[2].set_color(RED_B)
+        error.next_to(error_label, DOWN, buff=0.15).to_edge(LEFT, buff=1.0)
 
-        # Interpretación
+        self.play(FadeIn(error_label))
+        self.play(Write(error))
+        self.wait(0.5)
+
+        # ── Interpretación ────────────────────────────────────────────────
         interp = Text(
-            "Error relativo ≈ 0.028 %  —  aproximación muy precisa\n"
+            "Error relativo \u2248 0.028 %  \u2014  aproximación muy precisa\n"
             "porque (1.98, 1.03) está muy cerca de (2, 1).",
             font_size=24,
             color=GRAY_B,
             line_spacing=1.35,
-        ).to_edge(DOWN, buff=0.5)
-
-        self.play(FadeIn(aprox_label), Write(aprox))
-        self.wait(0.7)
-        self.play(FadeIn(real_label), Write(real))
-        self.wait(0.7)
-        self.play(FadeIn(error_label), Write(error))
-        self.wait(0.5)
+        )
+        interp.to_edge(DOWN, buff=0.45)
         self.play(FadeIn(interp, shift=UP * 0.15))
         self.wait(3)
+
