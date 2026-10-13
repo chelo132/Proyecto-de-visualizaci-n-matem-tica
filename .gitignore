@@ -1,0 +1,31 @@
+# Manim output
+media/
+__pycache__/
+*.pyc
+
+# Entorno virtual
+venv/
+.venv/
+env/
+
+# Python
+*.egg-info/
+dist/
+build/
+*.pyo
+
+# LaTeX auxiliares
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
