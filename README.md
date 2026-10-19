@@ -4,11 +4,13 @@
   <img src="https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/Manim-Community%20v0.18%2B-red?logo=manim" alt="Manim Community">
   <img src="https://img.shields.io/badge/C%C3%A1lculo-Avanzado-teal" alt="Cálculo Avanzado">
+  <a href="https://youtu.be/DrzBNY8B5EA"><img src="https://img.shields.io/badge/YouTube-Video%20Expositivo-FF0000?logo=youtube&logoColor=white" alt="Ver Video en YouTube"></a>
   <img src="https://img.shields.io/badge/Licencia-Educativa-green" alt="Licencia">
 </p>
 
 > **Cálculo Avanzado · Evaluación Individual de Desempeño (EID)**  
-> Animación matemática formal desarrollada con **[Manim Community](https://www.manim.community/)**.
+> Animación matemática formal desarrollada con **[Manim Community](https://www.manim.community/)**.  
+> 🎬 **Video Expositivo en YouTube:** [Ver presentación completa (6 min)](https://youtu.be/DrzBNY8B5EA)
 
 ---
 
@@ -168,15 +170,15 @@ manim -pqh src/main.py ProyectoCompleto
 
 ---
 
-## 📌 Estado de Avance
+---
 
-- [x] Memoria analítica rigurosa finalizada ([`docs/desarrollo_matematico.md`](file:///docs/desarrollo_matematico.md))
-- [x] Configuración de entorno y depuración de sintaxis en Manim Community
-- [x] 11 escenas modulares implementadas y probadas en [`src/main.py`](file:///src/main.py)
-- [x] Clase unificada `ProyectoCompleto` para renderizado continuo
-- [x] Guion sincronizado de 6 minutos completado ([`docs/guion_narracion.md`](file:///docs/guion_narracion.md))
-- [x] Configuración de [`.gitignore`](file:///.gitignore) para exclusión de artefactos pesados (`media/`)
-- [ ] Grabación final de locución oral y entrega
+## 🎥 Video de la Presentación
+
+Puedes ver la animación matemática completa con locución en el siguiente enlace de YouTube:
+
+[![Video Expositivo en YouTube](https://img.youtube.com/vi/DrzBNY8B5EA/maxresdefault.jpg)](https://youtu.be/DrzBNY8B5EA)
+
+🔗 **Enlace directo:** [https://youtu.be/DrzBNY8B5EA](https://youtu.be/DrzBNY8B5EA)
 
 ---
 
@@ -186,7 +188,7 @@ manim -pqh src/main.py ProyectoCompleto
 - [x] Configuración de entorno y depuración de sintaxis en Manim Community
 - [x] 11 escenas modulares implementadas y probadas en [`src/main.py`](file:///src/main.py)
 - [x] Clase unificada `ProyectoCompleto` para renderizado continuo
-- [x] Guion sincronizado de 6 minutos completado ([`docs/guion_narracion.md`](file:///docs/guion_narracion.md))
 - [x] Configuración de [`.gitignore`](file:///.gitignore) para exclusión de artefactos pesados (`media/`)
-- [ ] Grabación final de locución oral y entrega
+- [x] Grabación y publicación del video expositivo en YouTube ([Ver video](https://youtu.be/DrzBNY8B5EA))
+
 
