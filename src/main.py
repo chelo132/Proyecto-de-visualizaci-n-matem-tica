@@ -70,7 +70,7 @@ class Escena00Introduccion(Scene):
 
         self.play(Write(titulo), run_time=1.2)
         self.play(Write(subtitulo), run_time=0.8)
-        self.wait(0.4)
+        self.wait(2)
 
         sep = Line(LEFT * 6.2, RIGHT * 6.2, color=TEAL, stroke_width=1.5)
         sep.next_to(subtitulo, DOWN, buff=0.3)
@@ -82,7 +82,7 @@ class Escena00Introduccion(Scene):
         fila1.next_to(sep, DOWN, buff=0.55)
 
         self.play(FadeIn(label_func), Write(func_tex))
-        self.wait(0.4)
+        self.wait(2)
 
         label_pto = Text("Punto de tangencia:", font_size=26, color=GRAY_B)
         pto_tex   = MathTex(r"(a,\,b) = (2,\,1)", font_size=40, color=YELLOW)
@@ -90,7 +90,7 @@ class Escena00Introduccion(Scene):
         fila2.next_to(fila1, DOWN, buff=0.45).align_to(fila1, LEFT)
 
         self.play(FadeIn(label_pto), Write(pto_tex))
-        self.wait(0.4)
+        self.wait(2)
 
         label_apr = Text("Valor a aproximar:", font_size=26, color=GRAY_B)
         apr_tex   = MathTex(r"f(1.98,\;1.03) = \;?", font_size=40, color=GREEN_B)
@@ -98,7 +98,7 @@ class Escena00Introduccion(Scene):
         fila3.next_to(fila2, DOWN, buff=0.45).align_to(fila1, LEFT)
 
         self.play(FadeIn(label_apr), Write(apr_tex))
-        self.wait(0.5)
+        self.wait(2)
 
         pregunta = Text(
             "¿Cómo podemos usar el plano tangente para aproximar\n"
@@ -111,7 +111,7 @@ class Escena00Introduccion(Scene):
         caja = SurroundingRectangle(pregunta, color=BLUE_B, buff=0.22, corner_radius=0.12)
 
         self.play(Write(pregunta), Create(caja), run_time=1.5)
-        self.wait(3)
+        self.wait(30)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -144,6 +144,7 @@ class Escena01Superficie(ThreeDScene):
 
         self.play(Create(ejes), Write(labels), run_time=1.2)
         self.play(FadeIn(tarjeta_panel), run_time=0.8)
+        self.wait(21)
 
         pos_base = ejes.c2p(A, B, 0)
         pos_P = ejes.c2p(A, B, FAB)
@@ -156,9 +157,13 @@ class Escena01Superficie(ThreeDScene):
         punto_P = Dot3D(point=pos_P, radius=0.09, color=RED)
 
         self.play(FadeIn(punto_base), run_time=0.6)
+        self.wait(2)
+
         self.play(Create(linea_elevacion), run_time=0.8)
+        self.wait(2)
+
         self.play(FadeIn(punto_P), run_time=0.8)
-        self.wait(0.5)
+        self.wait(5)
 
         superficie = Surface(
             lambda u, v: ejes.c2p(u, v, f(u, v)),
@@ -196,13 +201,18 @@ class Escena02DerivadasParciales(Scene):
 
         bloque_y = VGroup(fy_formula, fy_eval, fy_interp).arrange(DOWN, aligned_edge=LEFT, buff=0.15)
         bloque_y.next_to(bloque_x, DOWN, buff=0.45).align_to(bloque_x, LEFT)
+        self.wait(6)
 
         self.play(Write(fx_formula))
+        self.wait(13)
+
         self.play(Write(fx_eval))
+        self.wait(2)
         self.play(FadeIn(fx_interp))
-        self.wait(1)
+        self.wait(6)
 
         self.play(Write(fy_formula))
+        self.wait(10)
         self.play(Write(fy_eval))
         self.play(FadeIn(fy_interp))
         self.wait(1.5)
@@ -217,7 +227,7 @@ class Escena02DerivadasParciales(Scene):
         caja_res = SurroundingRectangle(resumen, color=TEAL, buff=0.15, corner_radius=0.1)
 
         self.play(Write(resumen), Create(caja_res))
-        self.wait(2.5)
+        self.wait(3.5)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -282,14 +292,14 @@ class Escena03GraficaDerivadas3D(ThreeDScene):
 
         self.move_camera(phi=85 * DEGREES, theta=-90 * DEGREES, run_time=2.0)
         self.play(Create(curva_x), Create(v_tan_x), run_time=1.5)
-        self.wait(1.2)
+        self.wait(11)
 
         self.move_camera(phi=85 * DEGREES, theta=0 * DEGREES, run_time=2.0)
         self.play(Create(curva_y), Create(v_tan_y), run_time=1.5)
         self.wait(1.5)
 
         self.move_camera(phi=68 * DEGREES, theta=-55 * DEGREES, run_time=2.0)
-        self.wait(1)
+        self.wait(12)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -306,7 +316,7 @@ class Escena04ConstruccionEcuacionPlano(Scene):
         ).next_to(sep, DOWN, buff=0.35)
 
         self.play(Write(formula_gen))
-        self.wait(0.6)
+        self.wait(7)
 
         p1 = MathTex(r"\bullet \text{ Altura base: } f(2,1) = 2", font_size=26, color=YELLOW)
         p2 = MathTex(r"\bullet \text{ Cambio en } x: f_x(2,1)(x-2) = 1\cdot(x-2)", font_size=26, color=YELLOW)
@@ -334,9 +344,9 @@ class Escena04ConstruccionEcuacionPlano(Scene):
         caja_plano = SurroundingRectangle(simplificacion, color=ORANGE, buff=0.18, corner_radius=0.12)
 
         self.play(Write(sustitucion))
-        self.wait(0.5)
+        self.wait(10)
         self.play(Write(simplificacion), Create(caja_plano))
-        self.wait(2.5)
+        self.wait(2)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -394,7 +404,8 @@ class Escena05GraficaPlanoTangente3D(ThreeDScene):
         lbl_zoom = Text("Acercamiento Local: Superficie y Plano se confunden", font_size=19, color=YELLOW)
         lbl_zoom.to_corner(UR, buff=0.35)
         tarjeta_zoom = crear_tarjeta_hud(lbl_zoom, color_borde=YELLOW)
-        
+
+        self.wait(10)
         self.add_fixed_in_frame_mobjects(tarjeta_zoom)
         self.remove(tarjeta_zoom)
         self.play(FadeIn(tarjeta_zoom), run_time=0.6)
@@ -406,7 +417,17 @@ class Escena05GraficaPlanoTangente3D(ThreeDScene):
             frame_center=pos_P,
             run_time=3.0,
         )
-        self.wait(2.5)
+        self.wait(10)
+
+        self.move_camera(
+            phi=68 * DEGREES,
+            theta=-55 * DEGREES,
+            zoom=1.0,
+            frame_center=ORIGIN,
+            run_time=2.5,
+        )
+
+        self.wait(10)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -433,12 +454,11 @@ class Escena06Aproximacion(Scene):
         ).next_to(sustit, DOWN, buff=0.45)
         caja = SurroundingRectangle(simple, color=YELLOW, buff=0.18, corner_radius=0.1)
 
+        self.wait(3)
         self.play(Write(general))
-        self.wait(0.6)
         self.play(Write(sustit))
-        self.wait(0.6)
         self.play(Write(simple), Create(caja))
-        self.wait(0.8)
+        self.wait(1)
 
         just_tit = Text("¿Por qué aproxima a f(x, y)?", font_size=25, color=TEAL_C)
         just_tit.next_to(caja, DOWN, buff=0.45).to_edge(LEFT, buff=0.8)
@@ -453,7 +473,7 @@ class Escena06Aproximacion(Scene):
         ).next_to(just_tit, DOWN, buff=0.15).align_to(just_tit, LEFT)
 
         self.play(FadeIn(just_tit), FadeIn(just_desc, shift=UP * 0.15))
-        self.wait(3.5)
+        self.wait(17)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -475,7 +495,7 @@ class Escena07EstimacionComparacion(Scene):
         aprox.next_to(aprox_label, DOWN, buff=0.1).to_edge(LEFT, buff=0.9)
 
         self.play(FadeIn(aprox_label), Write(aprox))
-        self.wait(0.5)
+        self.wait(22)
 
         real_label = Text("2. Valor Real (Cálculo exacto / Herramienta computacional):", font_size=22, color=GREEN_B)
         real_label.next_to(aprox, DOWN, buff=0.25).to_edge(LEFT, buff=0.6)
@@ -489,7 +509,7 @@ class Escena07EstimacionComparacion(Scene):
         real.next_to(real_label, DOWN, buff=0.1).to_edge(LEFT, buff=0.9)
 
         self.play(FadeIn(real_label), Write(real))
-        self.wait(0.5)
+        self.wait(5)
 
         comp_label = Text("3. Comparación y Error Absoluto:", font_size=22, color=RED_B)
         comp_label.next_to(real, DOWN, buff=0.25).to_edge(LEFT, buff=0.6)
@@ -517,7 +537,7 @@ class Escena07EstimacionComparacion(Scene):
         caja_concl = SurroundingRectangle(concl_text, color=TEAL_C, buff=0.15, corner_radius=0.1)
 
         self.play(Create(caja_concl), FadeIn(concl_text))
-        self.wait(3.5)
+        self.wait(6.5)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -579,8 +599,9 @@ class Escena08VisualizacionAproximacion3D(ThreeDScene):
         self.play(Create(ejes), run_time=1.0)
         self.play(Create(superficie), Create(plano), FadeIn(pt_P), run_time=1.5)
         self.play(FadeIn(tarjeta), run_time=0.6)
+        self.wait(2.0)
         self.play(FadeIn(pt_eval), run_time=1.0)
-        self.wait(3.0)
+        self.wait(16.5)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -645,7 +666,7 @@ class Escena09CurvaturaError(ThreeDScene):
         )
         area_error.set_z_index(1)
         self.play(FadeIn(area_error), run_time=1.0)
-        self.wait(0.6)
+        self.wait(22)
 
         self.play(FadeOut(tarjeta_leyenda), run_time=0.5)
 
@@ -684,7 +705,7 @@ class Escena09CurvaturaError(ThreeDScene):
             run_time=2.0,
         )
         self.play(FadeIn(tarjeta_leyenda), run_time=0.6)
-        self.wait(1.5)
+        self.wait(15.5)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -739,9 +760,9 @@ class Escena10Conclusion(Scene):
 
         for bloque in conclusiones:
             self.play(FadeIn(bloque, shift=RIGHT * 0.2), run_time=1.1)
-            self.wait(1.2)
+            self.wait(8)
 
-        self.wait(3)
+        self.wait(8)
 
 
 # ════════════════════════════════════════════════════════════════════════════
